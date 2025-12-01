@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Darpana - Your AI Research Partner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat&family=Kalam&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --navy-deep: #0B1426; --yellow-electric: #FFD93D; --green-matrix: #00FF41; --white-warm: #F8F9FA; --navy-soft: #1A2332; }
+        body { font-family: 'Patrick Hand', cursive; background: var(--navy-deep); color: var(--white-warm); }
+        .hero-bg { background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-soft) 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .btn-primary { background: var(--yellow-electric); color: var(--navy-deep); padding: 16px 32px; border-radius: 8px; font-weight: bold; border: 2px solid var(--yellow-electric); cursor: pointer; transition: 0.3s; }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(255, 217, 61, 0.5); }
+        .nav-glass { background: rgba(11, 20, 38, 0.9); border-bottom: 1px solid #2A3441; position: fixed; top: 0; width: 100%; z-index: 50; padding: 1rem; }
+        .feature-card { background: var(--navy-soft); border: 1px solid #2A3441; border-radius: 16px; padding: 2rem; margin: 1rem; transition: 0.3s; }
+        .feature-card:hover { border-color: var(--yellow-electric); transform: translateY(-5px); }
+    </style>
+</head>
+<body>
+    <nav class="nav-glass">
+        <div class="flex justify-between container mx-auto items-center">
+            <div class="text-xl font-bold text-yellow-electric">✏️ Project Darpana</div>
+            <div class="space-x-6 hidden md:block">
+                <a href="index.html" class="text-white hover:text-yellow-400">Home</a>
+                <a href="dristi.html" class="text-white hover:text-yellow-400">DRISTI</a>
+                <a href="siddhanta.html" class="text-white hover:text-yellow-400">SIDDHANTA</a>
+                <a href="samvad.html" class="text-white hover:text-yellow-400">SAMVAD</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-bg">
+        <div>
+            <h1 class="text-6xl font-bold text-yellow-electric mb-4">Project Darpana</h1>
+            <p class="text-2xl text-gray-300 mb-8">Where Science Meets Intelligence</p>
+            <p class="text-xl text-green-400 mb-8">Founder: Jogeswar Bisoi | Mission: Undivided Koraput</p>
+            <div class="space-x-4">
+                <button onclick="window.location.href='dristi.html'" class="btn-primary">Try DRISTI (Vision)</button>
+                <button onclick="window.location.href='siddhanta.html'" class="btn-primary">Try SIDDHANTA (Logic)</button>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

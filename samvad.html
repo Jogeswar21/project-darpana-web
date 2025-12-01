@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SAMVAD - Speech AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Patrick Hand', cursive; background: #0B1426; color: #F8F9FA; padding-top: 80px; }
+        .mic-btn { width: 80px; height: 80px; background: #FF6B35; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; cursor: pointer; transition: 0.3s; }
+        .mic-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px #FF6B35; }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-5xl text-[#FFD93D] mb-4">🗣️ SAMVAD</h1>
+        <p class="text-xl mb-12">Odia & Hindi Scientific Pronunciation</p>
+        
+        <div class="mic-btn" onclick="alert('Listening...')">
+            <span class="text-4xl">🎤</span>
+        </div>
+        <p class="mt-4 text-gray-400">Tap to Speak</p>
+        
+        <div class="mt-12 p-6 bg-[#1A2332] rounded-xl max-w-lg mx-auto border border-[#2A3441]">
+            <h3 class="text-[#00FF41] text-2xl mb-2">Translation Output</h3>
+            <p>Waiting for voice input...</p>
+        </div>
+    </div>
+</body>
+</html>
