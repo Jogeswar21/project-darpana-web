@@ -7,207 +7,205 @@ import os
 
 # --- 1. PAGE CONFIGURATION ---
 st.set_page_config(
-    page_title="Project Darpana | AI Logic Engine",
-    page_icon="⚡",
+    page_title="Project Darpana | Jogeswar Bisoi",
+    page_icon="✏️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- 2. THE "FUTURE TECH" CSS (Modern SaaS Look) ---
+# --- 2. THE "KIMI GENIUS" CSS (Exact Match) ---
 st.markdown("""
     <style>
-    /* IMPORT MODERN FONT */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+    /* 1. IMPORT THE KIMI FONTS */
+    @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat&display=swap');
     
-    html, body, [class*="css"] {
-        font-family: 'Inter', sans-serif !important;
+    /* 2. GLOBAL FONT SETTINGS */
+    html, body, [class*="css"], .stMarkdown, .stButton, .stTextInput, .stSelectbox {
+        font-family: 'Patrick Hand', cursive !important;
+        font-size: 22px !important;
+        color: #F8F9FA !important; /* Warm White */
     }
     
-    /* BACKGROUND: Deep Tech Gradient */
+    /* 3. DEEP NAVY BACKGROUND (The Kimi Base) */
     .stApp {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
-        color: #e2e8f0 !important;
+        background-color: #0B1426 !important;
+        /* Subtle Graph Paper Effect */
+        background-image: 
+            linear-gradient(rgba(255, 217, 61, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 217, 61, 0.05) 1px, transparent 1px);
+        background-size: 30px 30px;
     }
     
-    /* SIDEBAR */
-    section[data-testid="stSidebar"] {
-        background-color: #020617 !important;
-        border-right: 1px solid #1e293b;
-    }
-    
-    /* TEXT STYLES */
+    /* 4. HEADERS (Electric Yellow) */
     h1, h2, h3 {
-        color: #f8fafc !important;
-        font-weight: 800 !important;
-        letter-spacing: -0.5px !important;
-    }
-    p, label { color: #94a3b8 !important; }
-    
-    /* INPUT FIELDS (Glass Effect) */
-    .stTextInput>div>div>input {
-        background-color: rgba(30, 41, 59, 0.5) !important;
-        color: #fff !important;
-        border: 1px solid #334155 !important;
-        border-radius: 8px !important;
-        padding: 12px !important;
-    }
-    .stTextInput>div>div>input:focus {
-        border-color: #38bdf8 !important;
-        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2) !important;
+        color: #FFD93D !important;
+        text-shadow: 2px 2px 0px #000 !important;
+        letter-spacing: 1px !important;
+        font-weight: 400 !important;
     }
     
-    /* FOUNDER CARD (Modern Card) */
-    .founder-card {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid #1e293b;
-        padding: 20px;
-        border-radius: 12px;
-        backdrop-filter: blur(10px);
-        margin-bottom: 20px;
+    /* 5. SIDEBAR (Soft Navy) */
+    section[data-testid="stSidebar"] {
+        background-color: #1A2332 !important;
+        border-right: 3px solid #FFD93D !important;
     }
     
-    /* BUTTONS (Neon Glow) */
+    /* 6. BUTTONS (Sketchy & Yellow) */
     .stButton>button {
-        background: linear-gradient(90deg, #0ea5e9, #2563eb) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        padding: 0.75rem 1.5rem !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.3) !important;
+        background-color: #FFD93D !important;
+        color: #0B1426 !important;
+        border: 2px solid #FFD93D !important;
+        border-radius: 255px 15px 225px 15px/15px 225px 15px 255px !important; /* The "Hand-drawn" shape */
+        font-weight: bold !important;
+        font-size: 24px !important;
+        height: 60px !important;
+        box-shadow: 0 4px 0px #000 !important;
+        transition: all 0.2s ease-in-out !important;
+        transform: rotate(-1deg);
     }
     .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.5) !important;
+        transform: translateY(-2px) rotate(0deg);
+        box-shadow: 0 6px 0px #00FF41 !important; /* Green shadow on hover */
+        background-color: #ffed4a !important;
     }
     
-    /* SUCCESS/ANALYSIS BOX */
-    .analysis-box {
-        background: rgba(16, 185, 129, 0.1);
-        border: 1px solid #10b981;
-        border-radius: 12px;
-        padding: 20px;
+    /* 7. INPUTS & CARDS */
+    .stTextInput>div>div>input {
+        background-color: #1A2332 !important;
+        color: #FFD93D !important;
+        border: 2px solid #2A3441 !important;
+        border-radius: 10px !important;
+        font-family: 'Patrick Hand', cursive !important;
+    }
+    .stTextInput>div>div>input:focus {
+        border-color: #FFD93D !important;
+        box-shadow: 0 0 10px rgba(255, 217, 61, 0.2) !important;
+    }
+    
+    /* 8. FOUNDER CARD (Glass Style) */
+    .founder-box {
+        background: rgba(26, 35, 50, 0.8);
+        border: 1px solid #2A3441;
+        border-left: 4px solid #FFD93D;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. HELPER: GENERATE CLEAN MATH IMAGE ---
+# --- 3. HELPER: GENERATE MATH IMAGE ---
 def generate_math_image(latex):
-    """Generates a crisp math image"""
-    plt.figure(figsize=(8, 3), facecolor='#0f172a')
-    plt.text(0.5, 0.5, f"${latex}$", fontsize=30, ha='center', va='center', color='#38bdf8')
+    plt.figure(figsize=(8, 3), facecolor='#0B1426')
+    plt.text(0.5, 0.5, f"${latex}$", fontsize=30, ha='center', va='center', color='#FFD93D')
     plt.axis('off')
     buf = BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', dpi=200, facecolor='#0f172a')
+    plt.savefig(buf, format='png', bbox_inches='tight', dpi=150, facecolor='#0B1426')
     buf.seek(0)
     plt.close()
     return Image.open(buf)
 
 # --- 4. SIDEBAR ---
 with st.sidebar:
-    # LOGO (Smart Loader)
+    # Logo Loader
     if os.path.exists("logo.png"):
-        st.image("logo.png", width=60)
-    else:
-        st.markdown("## ⚡ DARPANA")
-
-    st.markdown("**AI Logic Engine v1.0**")
+        st.image("logo.png", width=80)
+    elif os.path.exists("hero-notebook.jpg"):
+        st.image("hero-notebook.jpg", use_column_width=True)
+    
+    st.markdown("# ✏️ Darpana")
+    st.markdown("*The Genius Notebook*")
+    
     st.markdown("---")
     
-    # FOUNDER PROFILE (Modern)
+    # Founder Card
     st.markdown("""
-    <div class="founder-card">
-        <small style="color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Founder</small><br>
-        <strong style="color: #fff; font-size: 1.1rem;">Jogeswar Bisoi</strong> 
-        <span style="color:#38bdf8; font-size: 0.8rem;">✓ VERIFIED</span><br>
-        <div style="margin-top: 10px; font-size: 0.9rem; color: #cbd5e1;">
-        Mission: <strong>Undivided Koraput Development</strong>
-        </div>
+    <div class="founder-box">
+        <strong>Founder:</strong> Jogeswar Bisoi <span style="color:#00FF41">✔</span><br>
+        <span style="font-size: 16px; color:#B8BCC0;">jogeswarbisoifromkpt@gmail.com</span><br>
+        <hr style="border-top: 1px dashed #FFD93D; opacity: 0.3;">
+        <strong>Mission:</strong> Undivided Koraput Development
     </div>
     """, unsafe_allow_html=True)
     
-    # ENGINE STATUS
+    # Status Icons
     col1, col2 = st.columns([1, 4])
     with col1:
-        if os.path.exists("dristi-icon.png"): st.image("dristi-icon.png", width=30)
-        else: st.markdown("👁️")
+        if os.path.exists("dristi-icon.jpg"): st.image("dristi-icon.jpg")
+        else: st.write("👁️")
     with col2:
-        st.markdown("**Dristi Vision**\n<small style='color:#10b981'>● Online</small>", unsafe_allow_html=True)
+        st.write("**DRISTI** (Online)")
         
-    st.markdown("---")
-    
-    # GIF PREVIEW
-    if os.path.exists("kimi_preview.gif"):
-        st.image("kimi_preview.gif", caption="UI Interface", use_column_width=True)
+    col3, col4 = st.columns([1, 4])
+    with col3:
+        if os.path.exists("siddhanta-icon.jpg"): st.image("siddhanta-icon.jpg")
+        else: st.write("🧠")
+    with col4:
+        st.write("**SIDDHANTA** (Online)")
 
-# --- 5. MAIN DASHBOARD ---
+# --- 5. MAIN INTERFACE ---
 c1, c2 = st.columns([1.5, 2], gap="large")
 
 with c1:
-    st.markdown("# 🚀 Input Hub")
-    st.markdown("Enter your mathematical claim below.")
+    st.markdown("# 📓 Input Problem")
+    st.markdown("Write your equation below.")
     
-    # INPUTS
-    math_input = st.text_input("LaTeX Equation", r"\int x^2 dx")
+    math_input = st.text_input("LaTeX Equation:", r"\int x^2 dx")
     
-    col_a, col_b = st.columns(2)
-    with col_a:
-        subject = st.selectbox("Core Engine", ["Physics", "Mathematics", "Chemistry"])
-    with col_b:
-        lang = st.selectbox("Output Language", ["Odia", "Hindi", "English"])
-        
-    voice = st.text_area("Context Note", "Sir, is this derivation dimensionally correct?", height=100)
+    subject = st.select_slider("Select Engine:", ["Physics", "Math", "Chemistry"])
+    voice = st.text_area("Add a Note:", "Sir, is this correct?", height=100)
     
     st.markdown("####") 
-    if st.button("RUN LOGIC CHECK →"):
+    if st.button("RUN LOGIC CHECK ➜"):
         st.session_state['run'] = True
         st.session_state['math'] = math_input
 
 with c2:
     if 'run' in st.session_state:
-        st.markdown("# 🧠 Analysis Core")
+        st.markdown("# 🔍 Analysis")
         
-        # 1. VISUALIZATION
-        with st.spinner("Processing visual data..."):
+        with st.spinner("Parsing handwriting..."):
             time.sleep(1)
             try:
                 img = generate_math_image(st.session_state['math'])
-                st.image(img, caption="Digitized Input (High Res)")
+                st.image(img, caption="Digitized Input")
             except:
-                st.error("Syntax Error in Equation")
+                st.error("Syntax Error")
 
-        # 2. LOGIC RESULT
-        with st.spinner("Verifying axioms..."):
+        with st.spinner("Verifying logic..."):
             time.sleep(1.5)
             
         user_math = st.session_state['math']
         
-        # LOGIC
+        # Result Card (Kimi Style)
         if "int" in user_math:
             st.markdown("""
-            <div class="analysis-box">
-                <h3 style="color:#10b981; margin:0;">✅ LOGIC VERIFIED</h3>
-                <p style="color:#e2e8f0; margin-top:10px;">The integration follows standard calculus rules. Variable consistency check passed.</p>
+            <div style="background:#1A2332; padding:20px; border:2px dashed #00FF41; border-radius:12px; box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);">
+                <h3 style="color:#00FF41 !important; margin:0;">✅ LOGIC VERIFIED</h3>
+                <p style="color:#F8F9FA; margin-top:10px;">The integration follows standard calculus rules. Variable consistency check passed.</p>
             </div>
             """, unsafe_allow_html=True)
             proof = "theorem int_valid : ∫ x^2 = x^3/3 := by simp"
         else:
-            st.info("ℹ️ Syntax Validated. No proof required.")
+            st.info("ℹ️ Syntax Validated.")
             proof = "def check : Valid := true"
 
-        # 3. SAMVAD
-        st.markdown("### 🗣️ Samvad (Odia)")
-        st.info("🤖 \"Babu, logic thik achi. Integration constant add kariba bhulibani!\"")
+        # Samvad
+        st.markdown("### 🗣️ Samvad")
+        col_mic, col_txt = st.columns([1, 5])
+        with col_mic:
+            if os.path.exists("samvad-icon.jpg"): st.image("samvad-icon.jpg")
+        with col_txt:
+            st.info('"Babu, logic thik achi. Sabu thik!"')
         
-        with st.expander("View Formal Proof Code (Lean 4)"):
+        with st.expander("Show Proof Code"):
             st.code(proof, language="lean")
 
     else:
-        # EMPTY STATE (Modern)
+        # Empty State
         st.markdown("""
-        <div style="text-align: center; margin-top: 50px; padding: 60px; border: 2px dashed #334155; border-radius: 20px;">
-            <h2 style="color: #475569;">System Ready</h2>
-            <p>Waiting for equation input...</p>
+        <div style="text-align: center; margin-top: 50px; opacity: 0.5;">
+            <h3>Waiting for input...</h3>
+            <p>( The Logic Engine is sleeping )</p>
         </div>
         """, unsafe_allow_html=True)
