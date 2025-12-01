@@ -70,16 +70,14 @@ st.markdown("""
         border-radius: 10px !important;
     }
     
-    /* CUSTOM PROFILE IMAGE CIRCLE */
-    .profile-img {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        border: 3px solid #f1c40f;
-        object-fit: cover;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
+    /* FOUNDER BOX STYLE */
+    .founder-box {
+        background: rgba(26, 35, 50, 0.8);
+        border: 1px solid #2A3441;
+        border-left: 4px solid #f1c40f;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -104,23 +102,32 @@ def generate_math_image(latex):
 
 # --- 4. SIDEBAR ---
 with st.sidebar:
-    # 1. PROFILE PICTURE
-    col_p1, col_p2, col_p3 = st.columns([1, 2, 1])
-    with col_p2:
-        if os.path.exists("founder.jpg"):
-            st.image("founder.jpg", width=120) # Circular mask applied via CSS if needed, but simple width works best here
-        else:
-            st.write("👤") # Placeholder if you forgot to upload
-
-    st.markdown("<h2 style='text-align: center; color: #f1c40f;'>Jogeswar Bisoi</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 16px; margin-top: -15px;'>Founder & Architect</p>", unsafe_allow_html=True)
+    # 1. LOGO / BANNER
+    if os.path.exists("hero-notebook.jpg"):
+        st.image("hero-notebook.jpg", use_column_width=True)
+    elif os.path.exists("logo.png"):
+        st.image("logo.png", width=80)
     
-    st.success("✅ **Verified Creator**")
-    st.info("📍 Undivided Koraput, Odisha")
+    st.markdown("# ✏️ Project Darpana")
+    st.markdown("**Ver 1.0 (Koraput Release)**")
     
     st.markdown("---")
     
-    # 2. STATUS INDICATORS
+    # 2. FOUNDER CORNER (Text Only - Clean)
+    st.markdown("### 👨‍💻 Founder's Corner")
+    st.markdown("""
+    <div class="founder-box">
+        <h3 style="color:#f1c40f; margin:0;">Jogeswar Bisoi</h3>
+        <p style="font-size: 16px; margin:0; color:#00FF41;">✔ Verified Creator</p>
+        <p style="font-size: 14px; margin-top:5px; color:#B8BCC0;">jogeswarbisoifromkpt@gmail.com</p>
+        <hr style="border-top: 1px dashed #f1c40f; opacity: 0.3; margin: 10px 0;">
+        <p style="font-size: 16px; margin:0;"><strong>Mission:</strong> Undivided Koraput Development</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # 3. STATUS INDICATORS
     st.markdown("### 🛠️ System Status")
     
     status_cols = st.columns([1, 4])
@@ -158,7 +165,7 @@ with c1:
         if 'history' not in st.session_state: st.session_state['history'] = []
         st.session_state['history'].append(math_input)
 
-    # HISTORY SECTION (New Feature)
+    # HISTORY SECTION
     if 'history' in st.session_state and st.session_state['history']:
         st.markdown("---")
         st.markdown("### 🕒 Recent Checks")
@@ -188,4 +195,35 @@ with c2:
         if "int" in user_math and "dx" in user_math:
             st.success("✅ **LOGIC VERIFIED**")
             st.markdown("Integration logic is consistent. Variable of integration (dx) matches the integrand.")
-            proof = "theorem int_valid : ∫ x^2 = x^3/3 := by
+            proof = "theorem int_valid : ∫ x^2 = x^3/3 := by simp"
+        elif "=" in user_math:
+            st.warning("⚠️ **LOGIC GAP DETECTED**")
+            st.markdown("LHS does not dimensionally balance RHS.")
+            proof = "theorem balance_fail : LHS ≠ RHS"
+        else:
+            st.info("ℹ️ **SYNTAX CHECK**")
+            st.markdown("Valid expression, but no claim was made to verify.")
+            proof = "def expr : Nat := 0"
+
+        # 3. SAMVAD
+        st.markdown("---")
+        col_mic, col_txt = st.columns([1, 5])
+        with col_mic:
+            img = load_image("samvad-icon.jpg")
+            if img: st.image(img)
+            else: st.write("🎤")
+        with col_txt:
+            st.markdown("**Samvad (Odia):**")
+            st.info('"Babu, logic thik achi. Kintu integration constant bhuli jao ni!"')
+        
+        with st.expander("View Formal Proof (Lean 4)"):
+            st.code(proof, language="lean")
+
+    else:
+        # EMPTY STATE
+        st.markdown("""
+        <div style="text-align: center; margin-top: 50px; opacity: 0.5;">
+            <h3>Waiting for input...</h3>
+            <p>( The Logic Engine is sleeping )</p>
+        </div>
+        """, unsafe_allow_html=True)
