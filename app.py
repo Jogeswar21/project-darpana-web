@@ -1,229 +1,152 @@
-import streamlit as st
-import time
-import matplotlib.pyplot as plt
-from io import BytesIO
-from PIL import Image
 import os
+import google.generativeai as genai
+from flask import Flask, render_template, request, jsonify
+from PIL import Image
+import io
+import json
 
-# --- 1. CONFIGURATION ---
-st.set_page_config(
-    page_title="Project Darpana | Jogeswar Bisoi",
-    page_icon="✏️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+# --- CONFIGURATION & SETUP ---
+# template_folder ensures Flask finds your HTML files (index.html, etc.)
+app = Flask(__name__, template_folder='templates')
 
-# --- 2. THE "KIMI GENIUS" THEME ---
-st.markdown("""
-    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-    <style>
-    /* GLOBAL FONTS */
-    * {
-        font-family: 'Patrick Hand', cursive !important;
-        font-size: 24px !important;
-        color: #e6f1ff;
-    }
-    
-    /* APP BACKGROUND */
-    .stApp {
-        background-color: #0a192f !important;
-        background-image: radial-gradient(#112240 1px, transparent 1px);
-        background-size: 30px 30px;
-    }
-    
-    /* SIDEBAR */
-    section[data-testid="stSidebar"] {
-        background-color: #112240 !important;
-        border-right: 3px solid #f1c40f !important;
-    }
-    
-    /* INPUTS & TEXT AREAS */
-    .stTextInput>div>div>input, .stTextArea>div>div>textarea {
-        background-color: #1A2332 !important;
-        color: #f1c40f !important;
-        border: 2px dashed #f1c40f !important;
-        border-radius: 12px !important;
-    }
-    
-    /* BUTTONS */
-    .stButton>button {
-        background-color: #f1c40f !important;
-        color: #0a192f !important;
-        border: 2px solid #0a192f !important;
-        border-radius: 255px 15px 225px 15px/15px 225px 15px 255px !important;
-        font-weight: bold !important;
-        height: 65px !important;
-        box-shadow: 4px 4px 0px #000 !important;
-        transition: all 0.2s ease-in-out !important;
-    }
-    .stButton>button:hover {
-        transform: translateY(-3px);
-        box-shadow: 6px 6px 0px #2ecc71 !important;
-        background-color: #f39c12 !important;
-        color: white !important;
-    }
-    
-    /* ALERTS */
-    .stSuccess, .stInfo, .stWarning {
-        background-color: rgba(26, 35, 50, 0.9) !important;
-        border: 1px dashed #f1c40f !important;
-        border-radius: 10px !important;
-    }
-    
-    /* FOUNDER BOX STYLE */
-    .founder-box {
-        background: rgba(26, 35, 50, 0.8);
-        border: 1px solid #2A3441;
-        border-left: 4px solid #f1c40f;
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-    }
-    </style>
-""", unsafe_allow_html=True)
+# Environment Variable Check
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    print("WARNING: GOOGLE_API_KEY not found. AI features will be disabled.")
+    # Initialize a dummy model if key is missing, to prevent crashing
+    model = None 
+else:
+    genai.configure(api_key=GOOGLE_API_KEY)
+    # Use Gemini 1.5 Flash for speed across all vision and text tasks
+    model = genai.GenerativeModel('gemini-1.5-flash')
 
-# --- 3. HELPER FUNCTIONS ---
-def load_image(filename):
-    """Smart loader that handles missing files gracefully"""
-    if os.path.exists(filename):
-        return Image.open(filename)
-    return None
+# --- CORE ROUTE: Serves the HTML pages ---
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-def generate_math_image(latex):
-    """Generates a math image locally"""
-    plt.figure(figsize=(8, 3), facecolor='#0a192f')
-    plt.text(0.5, 0.5, f"${latex}$", fontsize=28, ha='center', va='center', color='#f1c40f')
-    plt.axis('off')
-    buf = BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', dpi=150, facecolor='#0a192f')
-    buf.seek(0)
-    plt.close()
-    return Image.open(buf)
+# --- 1. DRISTI: VISION AI ENDPOINT ---
+# Handles image upload, equation recognition, and analysis.
+@app.route('/api/dristi_analyze', methods=['POST'])
+def dristi_analyze():
+    if not model:
+        return jsonify({"error": "AI Service Unavailable. Missing GOOGLE_API_KEY."}), 503
 
-# --- 4. SIDEBAR ---
-with st.sidebar:
-    # 1. LOGO / BANNER
-    if os.path.exists("hero-notebook.jpg"):
-        st.image("hero-notebook.jpg", use_column_width=True)
-    elif os.path.exists("logo.png"):
-        st.image("logo.png", width=80)
-    
-    st.markdown("# ✏️ Project Darpana")
-    st.markdown("**Ver 1.0 (Koraput Release)**")
-    
-    st.markdown("---")
-    
-    # 2. FOUNDER CORNER (Text Only - Clean)
-    st.markdown("### 👨‍💻 Founder's Corner")
-    st.markdown("""
-    <div class="founder-box">
-        <h3 style="color:#f1c40f; margin:0;">Jogeswar Bisoi</h3>
-        <p style="font-size: 16px; margin:0; color:#00FF41;">✔ Verified Creator</p>
-        <p style="font-size: 14px; margin-top:5px; color:#B8BCC0;">jogeswarbisoifromkpt@gmail.com</p>
-        <hr style="border-top: 1px dashed #f1c40f; opacity: 0.3; margin: 10px 0;">
-        <p style="font-size: 16px; margin:0;"><strong>Mission:</strong> Undivided Koraput Development</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    # 3. STATUS INDICATORS
-    st.markdown("### 🛠️ System Status")
-    
-    status_cols = st.columns([1, 4])
-    with status_cols[0]:
-        img = load_image("dristi-icon.jpg")
-        if img: st.image(img)
-        else: st.write("👁️")
-    with status_cols[1]:
-        st.write("**DRISTI** (Online)")
+    try:
+        image_file = request.files.get('image')
+        if not image_file:
+            return jsonify({"error": "No image file provided."}), 400
+
+        # 1. Image Preprocessing
+        img_bytes = image_file.read()
+        image = Image.open(io.BytesIO(img_bytes))
+
+        # 2. AI Prompting (The Competitive Edge)
+        system_prompt = """
+        You are 'DRISTI', an elite AI Vision Engine for Project Darpana.
+        Your task is to analyze the provided image of a handwritten or printed equation.
         
-    status_cols2 = st.columns([1, 4])
-    with status_cols2[0]:
-        img = load_image("siddhanta-icon.jpg")
-        if img: st.image(img)
-        else: st.write("🧠")
-    with status_cols2[1]:
-        st.write("**SIDDHANTA** (Active)")
+        Analyze the image and respond STRICTLY in the following JSON format.
+        Do NOT include any extra text or markdown outside the JSON object.
+        
+        {
+          "recognized_equation": "[The full equation in LaTeX format]",
+          "confidence": [A number between 0.7 and 1.0],
+          "analysis_steps": [
+            "Step 1: Detected symbols and structure.",
+            "Step 2: Identified type (e.g., Integral Calculus).",
+            "Step 3: Verified syntax and formatting.",
+            "Step 4: Provided relevant formula context."
+          ]
+        }
+        """
+        
+        response = model.generate_content([system_prompt, image], 
+                                          config=genai.types.GenerateContentConfig(response_mime_type="application/json"))
+        
+        # 3. Parse and Return
+        # The AI is instructed to return JSON, so we safely parse it.
+        result = json.loads(response.text)
+        return jsonify(result)
 
-# --- 5. MAIN DASHBOARD ---
-c1, c2 = st.columns([1.5, 2], gap="large")
+    except Exception as e:
+        app.logger.error(f"DRISTI Analysis Error: {e}")
+        return jsonify({"error": f"Internal server error during processing: {str(e)}"}), 500
 
-with c1:
-    st.markdown("# 📓 Research Notebook")
-    st.write("Input your scientific query below.")
+# --- 2. SIDDHANTA: LOGIC AI ENDPOINT ---
+# Handles logical proof verification and suggestions.
+@app.route('/api/siddhanta_verify', methods=['POST'])
+def siddhanta_verify():
+    if not model:
+        return jsonify({"valid_status": False, "feedback": "AI Service Unavailable. Missing GOOGLE_API_KEY."})
     
-    math_input = st.text_input("LaTeX Equation:", r"\int x^2 dx")
-    subject = st.select_slider("Engine:", ["Physics", "Math", "Chemistry"])
-    voice = st.text_area("Add Context Note:", "Sir, checking dimensional consistency.", height=100)
+    data = request.get_json()
+    steps = data.get('steps', [])
+    theorem = data.get('theorem', '')
     
-    st.markdown("####")
-    if st.button("RUN LOGIC CHECK ➜"):
-        st.session_state['run'] = True
-        st.session_state['math'] = math_input
-        # Save to history
-        if 'history' not in st.session_state: st.session_state['history'] = []
-        st.session_state['history'].append(math_input)
+    # Simple check for empty proof
+    if not steps:
+        return jsonify({"valid_status": False, "feedback": "Proof steps are empty."})
 
-    # HISTORY SECTION
-    if 'history' in st.session_state and st.session_state['history']:
-        st.markdown("---")
-        st.markdown("### 🕒 Recent Checks")
-        for item in reversed(st.session_state['history'][-3:]): # Show last 3
-            st.code(item)
+    full_proof_text = f"Theorem: {theorem}\nProof Steps:\n" + "\n".join([f"Step {i+1}: {step['content']}" for i, step in enumerate(steps)])
 
-with c2:
-    if 'run' in st.session_state:
-        st.markdown("# 🔍 Analysis Results")
+    system_prompt = f"""
+    You are 'SIDDHANTA', an AI Logic Verifier. Your job is to meticulously check the logical flow of the given proof steps against the stated theorem.
+    
+    Respond STRICTLY in the following JSON format. Identify the first logical error, if any, and suggest a correction.
+    
+    {{
+      "valid_status": [true/false],
+      "feedback": "[Detailed analysis or successful confirmation]",
+      "suggestions": [
+        "Suggestion 1: What to change in the proof.",
+        "Suggestion 2: Alternative approach."
+      ]
+    }}
+    """
+    
+    try:
+        response = model.generate_content(system_prompt + "\n\n" + full_proof_text,
+                                          config=genai.types.GenerateContentConfig(response_mime_type="application/json"))
+        return jsonify(json.loads(response.text))
+    except Exception as e:
+        return jsonify({"valid_status": False, "feedback": f"AI Logic Error: {str(e)}", "suggestions": []})
+
+# --- 3. SAMVAD: MULTILINGUAL AI ENDPOINT ---
+# Handles scientific term lookup and cultural context.
+@app.route('/api/samvad_lookup', methods=['POST'])
+def samvad_lookup():
+    if not model:
+        return jsonify({"error": "AI Service Unavailable. Missing GOOGLE_API_KEY."})
         
-        # 1. VISUALIZATION
-        with st.spinner("Dristi is scanning..."):
-            time.sleep(0.8)
-            try:
-                img = generate_math_image(st.session_state['math'])
-                st.image(img, caption="Digitized Input")
-            except:
-                st.error("Syntax Error")
+    data = request.get_json()
+    term = data.get('term', '')
+    language = data.get('language', 'english')
 
-        # 2. LOGIC
-        with st.spinner("Siddhanta is proving..."):
-            time.sleep(1.2)
-            
-        user_math = st.session_state['math']
-        
-        # LOGIC GATES
-        if "int" in user_math and "dx" in user_math:
-            st.success("✅ **LOGIC VERIFIED**")
-            st.markdown("Integration logic is consistent. Variable of integration (dx) matches the integrand.")
-            proof = "theorem int_valid : ∫ x^2 = x^3/3 := by simp"
-        elif "=" in user_math:
-            st.warning("⚠️ **LOGIC GAP DETECTED**")
-            st.markdown("LHS does not dimensionally balance RHS.")
-            proof = "theorem balance_fail : LHS ≠ RHS"
-        else:
-            st.info("ℹ️ **SYNTAX CHECK**")
-            st.markdown("Valid expression, but no claim was made to verify.")
-            proof = "def expr : Nat := 0"
+    system_prompt = f"""
+    You are 'SAMVAD', a Multilingual Scientific Communication AI.
+    Look up the term '{term}' and provide its phonetic guide, definition, and cultural context tailored for students.
+    The response should be primarily in {language} where possible.
+    
+    Respond STRICTLY in the following JSON format.
+    
+    {{
+      "term": "{term}",
+      "language": "{language}",
+      "phonetic": "[Pronunciation guide, e.g., /ˌfoʊtoʊˈsɪnθəsɪs/]",
+      "definition": "[Concise definition in the requested language]",
+      "cultural_context": "[Brief explanation of the term's origin or relevance to Indian science/etymology]"
+    }}
+    """
+    
+    try:
+        response = model.generate_content(system_prompt,
+                                          config=genai.types.GenerateContentConfig(response_mime_type="application/json"))
+        return jsonify(json.loads(response.text))
+    except Exception as e:
+        return jsonify({"error": f"AI Lookup Error: {str(e)}"}), 500
 
-        # 3. SAMVAD
-        st.markdown("---")
-        col_mic, col_txt = st.columns([1, 5])
-        with col_mic:
-            img = load_image("samvad-icon.jpg")
-            if img: st.image(img)
-            else: st.write("🎤")
-        with col_txt:
-            st.markdown("**Samvad (Odia):**")
-            st.info('"Babu, logic thik achi. Kintu integration constant bhuli jao ni!"')
-        
-        with st.expander("View Formal Proof (Lean 4)"):
-            st.code(proof, language="lean")
 
-    else:
-        # EMPTY STATE
-        st.markdown("""
-        <div style="text-align: center; margin-top: 50px; opacity: 0.5;">
-            <h3>Waiting for input...</h3>
-            <p>( The Logic Engine is sleeping )</p>
-        </div>
-        """, unsafe_allow_html=True)
+if __name__ == '__main__':
+    # Required for deployment on Hugging Face Spaces
+    app.run(host='0.0.0.0', port=7860)
